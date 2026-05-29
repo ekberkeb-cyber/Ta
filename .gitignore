@@ -1,69 +1,187 @@
-# Prerequisites
-*.d
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sana Bir Mektup Var</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f7d6d8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+        #before {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.5s ease;
+        }
 
-# Precompiled Headers
-*.gch
-*.pch
+        .title {
+            font-size: 2rem;
+            color: #d11a2a;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
 
-# Linker files
-*.ilk
+        .heart {
+            font-size: 2rem;
+            color: #e63946;
+            margin-bottom: 10px;
+        }
 
-# Debugger Files
-*.pdb
+        .name {
+            font-size: 1.5rem;
+            color: #457b9d;
+            margin-bottom: 30px;
+        }
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-*.so.*
+        /* Zarf Tasarımı */
+        .envelope {
+            position: relative;
+            width: 200px;
+            height: 140px;
+            background-color: #e07a5f;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
 
+        .envelope:hover {
+            transform: translateY(-10px);
+        }
 
-# Fortran module files
-*.mod
-*.smod
+        .body {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 100px solid transparent;
+            border-right: 100px solid transparent;
+            border-bottom: 80px solid #d4a373;
+            border-top: 60px solid #e07a5f;
+            bottom: 0;
+        }
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+        .flap {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 100px solid transparent;
+            border-right: 100px solid transparent;
+            border-top: 80px solid #cc8b6b;
+            top: 0;
+            transform-origin: top;
+            transition: transform 0.5s ease;
+            z-index: 2;
+        }
 
-# Executables
-*.exe
-*.out
-*.app
+        .envelope.open .flap {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
 
-# Build directories
-build/
-Build/
-build-*/
+        .hint {
+            margin-top: 20px;
+            color: #555;
+            font-style: italic;
+        }
 
-# CMake generated files
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-Makefile
-install_manifest.txt
-compile_commands.json
+        /* Mektup Tasarımı */
+        .letter {
+            display: none;
+            position: absolute;
+            background-color: #fdf0d5;
+            padding: 30px;
+            width: 300px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-radius: 5px;
+            font-size: 1.1rem;
+            color: #333;
+            line-height: 1.6;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.8s ease;
+        }
 
-# Temporary files
-*.tmp
-*.log
-*.bak
-*.swp
+        .letter.show {
+            display: block;
+            transform: scale(1);
+            opacity: 1;
+        }
 
-# vcpkg
-vcpkg_installed/
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 20px;
+            background: #333;
+            animation: blink 0.7s infinite;
+        }
 
-# debug information files
-*.dwo
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
 
-# test output & cache
-Testing/
-.cache/
+    <div id="before">
+        <div class="title">Sana Bir Mektup Var</div>
+        <div class="heart">❤️</div>
+        <div class="name">Araf</div>
+
+        <div class="envelope" id="envelope" onclick="openLetter()">
+            <div class="flap"></div>
+            <div class="body"></div>
+        </div>
+
+        <div class="hint">Açmak için zarfa tıkla...</div>
+    </div>
+
+    <div class="letter" id="letter">
+        <span id="text"></span><span class="cursor" id="cursor"></span>
+    </div>
+
+    <script>
+        function openLetter() {
+            // Zarfı animasyonla aç
+            document.getElementById('envelope').classList.add('open');
+            
+            // Ön kısmı (Zarfı ve yazıları) gizle
+            setTimeout(() => {
+                document.getElementById('before').style.display = 'none';
+                document.getElementById('letter').classList.add('show');
+                
+                // Mektup metnini daktilo efektiyle yaz
+                typeWriter();
+            }, 500);
+        }
+
+        const message = "Sevgili Araf,\n\nBu mektup sana beklenmedik bir anda, içten gelen en güzel duyguları fısıldamak için yazıldı. Hayatın koşturmacasında bazen durup sevdiklerimize küçük sürprizler yapmak gerekir. Kalbindeki o güzel ışığın hiç sönmemesini dilerim...\n\nSevgilerle...";
+        let i = 0;
+
+        function typeWriter() {
+            if (i < message.length) {
+                // \n işaretini <br> etiketine çevirerek satır atla
+                if (message.charAt(i) === '\n') {
+                    document.getElementById('text').innerHTML += '<br>';
+                } else {
+                    document.getElementById('text').innerHTML += message.charAt(i);
+                }
+                i++;
+                setTimeout(typeWriter, 70); // Yazma hızı (milisaniye)
+            } else {
+                // Yazı bittiğinde imleci kaldır
+                document.getElementById('cursor').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
